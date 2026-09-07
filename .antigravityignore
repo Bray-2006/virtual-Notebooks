@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+vendor/
+
+# Builds
+dist/
+build/
+.next/
+out/
+
+# Lockfiles (pesados, casi nunca útiles para la IA)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Archivos generados / minificados
+**/*.min.js
+**/*.min.css
+**/*.map
+
+# Binarios y medios
+**/*.png
+**/*.jpg
+**/*.mp4
+public/assets/

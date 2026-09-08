@@ -1,0 +1,38 @@
+<div class="flex min-h-full flex-col items-start overflow-hidden bg-base-200 transition-[width] duration-300 ease-in-out is-drawer-close:w-20 is-drawer-open:w-72">
+  <div class="w-full border-b border-base-300 p-4 is-drawer-close:hidden">
+    <div class="mb-1 flex items-center gap-2 text-primary">
+      <i class="pi pi-book text-lg" aria-hidden="true"></i>
+      <h2 class="font-bold">Cuadernos</h2>
+    </div>
+    <p class="text-sm leading-relaxed text-base-content/60">
+      Organiza tus ideas, notas y conocimientos en un solo lugar.
+    </p>
+  </div>
+
+  <ul class="menu w-full grow gap-2 p-2">
+    <li>
+      <button
+        type="button"
+        class="btn btn-primary flex w-full justify-start gap-3 shadow-sm is-drawer-close:tooltip is-drawer-close:tooltip-right"
+        data-tip="Crear cuaderno"
+      >
+        <i class="pi pi-plus text-lg" aria-hidden="true"></i>
+        <span class="transition-opacity duration-200 is-drawer-close:invisible is-drawer-close:opacity-0">Crear cuaderno</span>
+      </button>
+    </li>
+
+    <li class="mt-3 is-drawer-close:hidden">
+      <span class="menu-title px-3 text-xs uppercase tracking-wider text-base-content/50">Tu espacio</span>
+    </li>
+    <li>
+      <button
+        type="button"
+        class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+        data-tip="Todos los cuadernos"
+      >
+        <i class="pi pi-folder text-primary text-2xl" aria-hidden="true"></i>
+        <span class="transition-opacity duration-200 is-drawer-close:invisible is-drawer-close:opacity-0">Todos los cuadernos</span>
+      </button>
+    </li>
+  </ul>
+</div>

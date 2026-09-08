@@ -29,6 +29,9 @@ importers:
       '@primeuix/themes':
         specifier: ^3.0.0
         version: 3.0.0
+      primeicons:
+        specifier: ^8.0.0
+        version: 8.0.0
       primeng:
         specifier: ^22.1.0
         version: 22.1.0(238d5021c3dc68c3b40ab53d8404a9d3)
@@ -2358,6 +2361,9 @@ packages:
     resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
     engines: {node: '>=14'}
     hasBin: true
+
+  primeicons@8.0.0:
+    resolution: {integrity: sha512-eZGk+Mgb4fE+LkJi9LvllbnB4RVUF9kzmnLVnT3ZMY6stqKVh7TUJ0mFoMNIEgTnJSvhaGcJotDiSvtVvkHd7g==}
 
   primeng@22.1.0:
     resolution: {integrity: sha512-xdY83QxHghl5RdrFlGWU3HgY2Sf8Gq2PJqFpajM6mh36MjOtUvQTXekwTckxitLEw1RZHbX9U6oKBOsH6d4sZg==}
@@ -4748,6 +4754,8 @@ snapshots:
       source-map-js: 1.2.1
 
   prettier@3.9.6: {}
+
+  primeicons@8.0.0: {}
 
   primeng@22.1.0(238d5021c3dc68c3b40ab53d8404a9d3):
     dependencies:

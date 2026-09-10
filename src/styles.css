@@ -2,5 +2,5 @@
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
  @plugin "daisyui" {
-   themes: dark --default, dark --prefersdark;
+   themes: light --default, dark --prefersdark;
  }

@@ -13,4 +13,45 @@
           <p class="text-xs text-base-content/60">Tu espacio de conocimiento</p>
         </div>
       </div>
+      <div class="ml-auto flex items-center gap-2">
+        <p-selectbutton
+          [options]="modeOptions"
+          [(ngModel)]="selectedMode"
+          optionLabel="label"
+          optionValue="value"
+          (onChange)="setMode($event.value)"
+          ariaLabel="Elegir tema claro u oscuro"
+        >
+          <ng-template #item let-option>
+            <i [class]="option.icon" [attr.aria-label]="option.label"></i>
+          </ng-template>
+        </p-selectbutton>
+
+        <p-select
+          [options]="presetOptions"
+          [(ngModel)]="selectedPreset"
+          optionLabel="label"
+          optionValue="value"
+          (onChange)="setPreset($event.value)"
+          placeholder="Tema"
+          ariaLabel="Elegir tema PrimeNG"
+          class="hidden sm:inline-flex"
+        ></p-select>
+
+        <div class="flex items-center gap-1" aria-label="Elegir color primario">
+          @for (color of primaryColors; track color.value) {
+            <button
+              pButton
+              type="button"
+              text
+              rounded
+              class="size-7 border-2 border-base-100 shadow-sm"
+              [style.background]="color.hex"
+              [attr.aria-label]="'Color primario ' + color.name"
+              [attr.aria-pressed]="selectedPrimary === color.value"
+              (click)="setPrimaryColor(color.value)"
+            ></button>
+          }
+        </div>
+      </div>
     </nav>

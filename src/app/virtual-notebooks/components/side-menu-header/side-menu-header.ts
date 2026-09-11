@@ -7,11 +7,11 @@ import Lara from '@primeuix/themes/lara';
 import Nora from '@primeuix/themes/nora';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { SelectModule } from 'primeng/select';
+import { PopoverModule } from 'primeng/popover';
 
 @Component({
   selector: 'app-side-menu-header',
-  imports: [FormsModule, ButtonModule, SelectButtonModule, SelectModule],
+  imports: [FormsModule, ButtonModule, SelectButtonModule, PopoverModule],
   templateUrl: './side-menu-header.html',
 })
 
@@ -34,7 +34,17 @@ export class SideMenuHeader {
   readonly primaryColors = [
     { name: 'Índigo', value: 'indigo', palette: this.palette('indigo'), hex: '#6366f1' },
     { name: 'Violeta', value: 'violet', palette: this.palette('violet'), hex: '#8b5cf6' },
-    { name: 'Esmeralda', value: 'emerald', palette: this.palette('emerald'), hex: '#10b981' }
+    { name: 'Esmeralda', value: 'emerald', palette: this.palette('emerald'), hex: '#10b981' },
+    { name: 'Lima', value: 'lime', palette: this.palette('lime'), hex: '#84cc16' },
+    { name: 'Naranja', value: 'orange', palette: this.palette('orange'), hex: '#f97316' },
+    { name: 'Ámbar', value: 'amber', palette: this.palette('amber'), hex: '#f59e0b' },
+    { name: 'Amarillo', value: 'yellow', palette: this.palette('yellow'), hex: '#eab308' },
+    { name: 'Cian', value: 'cyan', palette: this.palette('cyan'), hex: '#06b6d4' },
+    { name: 'Azul', value: 'blue', palette: this.palette('blue'), hex: '#3b82f6' },
+    { name: 'Púrpura', value: 'purple', palette: this.palette('purple'), hex: '#a855f7' },
+    { name: 'Rosa', value: 'pink', palette: this.palette('pink'), hex: '#ec4899' },
+    { name: 'Rojo', value: 'red', palette: this.palette('red'), hex: '#ef4444' },
+    { name: 'Blanco', value: 'slate', palette: this.palette('slate'), hex: '#f8fafc' }
   ];
 
   selectedMode = 'light';
@@ -78,7 +88,7 @@ export class SideMenuHeader {
     }
   }
 
-  private palette(name: 'indigo' | 'violet' | 'emerald'): Record<string, string> {
+  private palette(name: string): Record<string, string> {
     return {
       50: `{${name}.50}`,
       100: `{${name}.100}`,

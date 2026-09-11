@@ -1,0 +1,50 @@
+@for (notebookItem of notebooksOptions(); track notebookItem.id) {
+<div class="block w-full">
+    <button
+      type="button"
+      class="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-semibold text-base-content transition-colors hover:bg-base-300 cursor-pointer"
+      [attr.aria-expanded]="isFolderOpen(notebookItem.id)"
+      [attr.aria-controls]="'notebooks-folder-content-' + notebookItem.id"
+      (click)="toggleFolder(notebookItem.id)"
+      (keydown.enter)="toggleFolder(notebookItem.id)"
+    >
+      <span class="flex min-w-0 items-center gap-3">
+        <i class="pi pi-folder text-primary" aria-hidden="true"></i>
+        <span class="truncate">{{ notebookItem.carpetName }}</span>
+      </span>
+      <i
+        class="pi shrink-0 text-sm transition-transform duration-300"
+        [class.pi-chevron-down]="isFolderOpen(notebookItem.id)"
+        [class.pi-chevron-right]="!isFolderOpen(notebookItem.id)"
+        aria-hidden="true"
+      ></i>
+    </button>
+
+    <div
+      [id]="'notebooks-folder-content-' + notebookItem.id"
+      class="grid transition-[grid-template-rows,opacity] duration-300 ease-in-out"
+      [class.grid-rows-[1fr]]="isFolderOpen(notebookItem.id)"
+      [class.grid-rows-[0fr]]="!isFolderOpen(notebookItem.id)"
+      [class.opacity-100]="isFolderOpen(notebookItem.id)"
+      [class.opacity-0]="!isFolderOpen(notebookItem.id)"
+      [attr.aria-hidden]="!isFolderOpen(notebookItem.id)"
+    >
+      <div class="min-h-0 overflow-hidden">
+        <div class="flex w-full flex-col gap-1 py-2">
+          @for (notebook of notebookItem.notebooks; track notebook.id) {
+            <a
+              routerLink="/dashboard/notebook"
+              [queryParams]="{ notebook: notebook.id }"
+              routerLinkActive="bg-primary/10 text-primary"
+              [routerLinkActiveOptions]="{ exact: false }"
+              class="flex w-full items-center justify-start gap-3 rounded-lg px-3 py-2 pl-10 text-left text-sm text-base-content transition-colors hover:bg-base-300"
+            >
+              <i [class]="notebook.icon" aria-hidden="true"></i>
+              <span class="truncate">{{ notebook.name }}</span>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

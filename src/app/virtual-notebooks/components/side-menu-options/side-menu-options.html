@@ -25,15 +25,10 @@
     <li class="mt-3 is-drawer-close:hidden">
       <span class="menu-title px-3 text-xs uppercase tracking-wider text-base-content/50">Tu espacio</span>
     </li>
-    <li>
-      <button
-        type="button"
-        class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-        data-tip="Todos los cuadernos"
-      >
-        <i class="pi pi-folder text-primary text-2xl" aria-hidden="true"></i>
-        <span class="transition-opacity duration-200  ">Todos los cuadernos</span>
-      </button>
+    <li class="w-full is-drawer-close:hidden">
+         <app-side-menu-folders-accorditions [notebooksOptions]="NotebooksOptions()"/>
+         
+
     </li>
   </ul>
 </div>

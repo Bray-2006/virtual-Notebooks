@@ -27,31 +27,50 @@
           </ng-template>
         </p-selectbutton>
 
-        <p-select
-          [options]="presetOptions"
-          [(ngModel)]="selectedPreset"
-          optionLabel="label"
-          optionValue="value"
-          (onChange)="setPreset($event.value)"
-          placeholder="Tema"
-          ariaLabel="Elegir tema PrimeNG"
-          class="hidden sm:inline-flex"
-        ></p-select>
+        <button
+          pButton
+          type="button"
+          text
+          rounded
+          icon="pi pi-palette"
+          class="size-10 text-8xl"
+          aria-label="Abrir selector de paleta y tema"
+          (click)="palettePopover.toggle($event)"
+        ></button>
 
-        <div class="flex items-center gap-1" aria-label="Elegir color primario">
-          @for (color of primaryColors; track color.value) {
-            <button
-              pButton
-              type="button"
-              text
-              rounded
-              class="size-7 border-2 border-base-100 shadow-sm"
-              [style.background]="color.hex"
-              [attr.aria-label]="'Color primario ' + color.name"
-              [attr.aria-pressed]="selectedPrimary === color.value"
-              (click)="setPrimaryColor(color.value)"
-            ></button>
-          }
-        </div>
+        <p-popover #palettePopover>
+          <div class="w-64 space-y-4 p-1">
+            <section>
+              <p class="mb-2 text-sm font-semibold">Primary</p>
+              <div class="grid grid-cols-7 gap-2" aria-label="Elegir color primario">
+                @for (color of primaryColors; track color.value) {
+                  <button
+                    pButton
+                    type="button"
+                    text
+                    rounded
+                    class="size-6 border-2 border-base-100 shadow-sm"
+                    [style.background]="color.hex"
+                    [attr.aria-label]="'Color primario ' + color.name"
+                    [attr.aria-pressed]="selectedPrimary === color.value"
+                    (click)="setPrimaryColor(color.value)"
+                  ></button>
+                }
+              </div>
+            </section>
+
+            <section>
+              <p class="mb-2 text-sm font-semibold">Presets</p>
+              <p-selectbutton
+                [options]="presetOptions"
+                [(ngModel)]="selectedPreset"
+                optionLabel="label"
+                optionValue="value"
+                (onChange)="setPreset($event.value)"
+                ariaLabel="Elegir preset de PrimeNG"
+              ></p-selectbutton>
+            </section>
+          </div>
+        </p-popover>
       </div>
     </nav>

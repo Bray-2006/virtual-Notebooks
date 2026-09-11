@@ -17,6 +17,7 @@ import { SelectModule } from 'primeng/select';
 
 export class SideMenuHeader {
   private readonly document = inject(DOCUMENT);
+  private readonly themeKey = 'virtual-notebooks-theme';
 
 
   readonly modeOptions = [
@@ -41,11 +42,14 @@ export class SideMenuHeader {
   selectedPrimary = 'indigo';
 
   constructor() {
-    this.setMode(this.selectedMode);
+    const savedMode = this.document.defaultView?.localStorage.getItem(this.themeKey);
+    this.setMode(savedMode === 'dark' ? 'dark' : 'light');
   }
 
   setMode(mode: string): void {
     this.selectedMode = mode;
+    this.document.defaultView?.localStorage.setItem(this.themeKey, mode);
+
     const isDark = mode === 'dark';
     this.document.documentElement.classList.toggle('p-dark', isDark);
     this.document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'cupcake');

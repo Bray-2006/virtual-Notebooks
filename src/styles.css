@@ -4,4 +4,9 @@
  @plugin "daisyui" {
    themes: light --default, dark --prefersdark;
  }
-
+.primary-text {
+  color: var(--p-primary-color);
+}
+.bg-primary {
+  background-color: var(--p-primary-color);
+}

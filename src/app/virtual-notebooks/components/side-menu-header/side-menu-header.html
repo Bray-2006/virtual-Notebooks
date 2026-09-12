@@ -6,10 +6,10 @@
       </label>
       <div class="flex items-center gap-3 px-3">
         <div class="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-content shadow-sm">
-          <i class="pi pi-book text-xl" aria-hidden="true"></i>
+          <i class="pi pi-book text-xl font-bold" aria-hidden="true"></i>
         </div>
         <div class="leading-tight">
-          <p class="text-base font-bold tracking-tight">Virtual Notebooks</p>
+          <p class="text-base font-bold tracking-tight ">Virtual Notebooks</p>
           <p class="text-xs text-base-content/60">Tu espacio de conocimiento</p>
         </div>
       </div>
@@ -30,13 +30,13 @@
         <button
           pButton
           type="button"
-          text
+          
           rounded
-          icon="pi pi-palette"
-          class="size-10 text-8xl"
           aria-label="Abrir selector de paleta y tema"
           (click)="palettePopover.toggle($event)"
-        ></button>
+        >
+          <i pButtonIcon class="pi pi-palette"></i>  
+      </button>
 
         <p-popover #palettePopover>
           <div class="w-64 space-y-4 p-1">

@@ -1,0 +1,151 @@
+.notebook-page {
+  min-height: calc(100vh - 5rem);
+  padding: clamp(1.25rem, 3vw, 3rem);
+  /* background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); */
+}
+
+.notebook-header,
+.notebook-navigation,
+.paper-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.notebook-header {
+  max-width: 68rem;
+  margin: 0 auto 1.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--p-primary-color);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.notebook-title {
+  width: min(100%, 25rem);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #172554;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  outline: 0;
+}
+
+.notebook-title:focus {
+  border-bottom-color: var(--p-primary-color);
+}
+
+.page-counter {
+  margin: 0.35rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.paper-spread {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  max-width: 68rem;
+  margin: 0 auto;
+  transition: opacity 180ms ease-in-out;
+}
+
+.paper {
+  display: flex;
+  flex-direction: column;
+  min-height: min(62vh, 42rem);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1.5rem 3rem rgb(30 41 59 / 0.1);
+}
+
+.paper-toolbar {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.save-indicator {
+  color: #16a34a;
+  font-size: 0.8rem;
+}
+
+.writing-area {
+  flex: 1;
+  width: 100%;
+  min-height: 28rem;
+  padding: 1.5rem;
+  border: 0;
+  outline: 0;
+  resize: vertical;
+  color: #1e293b;
+  font: inherit;
+  font-size: 1.05rem;
+  line-height: 2rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(2rem - 1px),
+    #e2e8f0 calc(2rem - 1px),
+    #e2e8f0 2rem
+  );
+}
+
+.empty-page {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 2rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.empty-page i {
+  font-size: 1.25rem;
+}
+
+.notebook-navigation {
+  max-width: 68rem;
+  margin: 1.25rem auto 0;
+}
+
+.notebook-navigation p-paginator {
+  flex: 1;
+}
+
+@media (max-width: 700px) {
+  .notebook-header,
+  .notebook-navigation,
+  .paper-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .paper-spread {
+    grid-template-columns: 1fr;
+  }
+
+  .notebook-header button,
+  .notebook-navigation button {
+    width: 100%;
+  }
+
+  .notebook-navigation p-paginator {
+    order: -1;
+  }
+
+  .save-indicator {
+    align-self: flex-start;
+  }
+}

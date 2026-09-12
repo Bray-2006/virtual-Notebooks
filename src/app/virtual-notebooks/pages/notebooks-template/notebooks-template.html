@@ -1,9 +1,81 @@
-<p-splitter [style]="{ height: '300px' }" class="mb-8">
-    <ng-template #panel>
-        <div class="flex items-center justify-center h-full">Panel 1</div>
-    </ng-template>
-    <ng-template #panel>
-        <div class="flex items-center justify-center h-full"><button pButton severity="success"> nigga</button></div>
-        
-    </ng-template>
-</p-splitter>
+<main class="notebook-page">
+  <header class="notebook-header">
+    <div>
+      <p class="eyebrow">CUADERNO VIRTUAL</p>
+      <input
+        class="notebook-title"
+        [value]="notebookTitle()"
+        aria-label="Título del cuaderno"
+        (input)="updateTitle($event)"
+      />
+      <p class="page-counter">Spread {{ currentSpread() + 1 }} de {{ spreadCount() }}</p>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      label="Nueva página"
+      icon="pi pi-plus"
+      severity="primary"
+      (click)="addPage()"
+    ></button>
+  </header>
+
+  <section class="paper-spread" aria-label="Páginas del cuaderno">
+    @for (page of visiblePages(); track $index; let pageIndex = $index) {
+      <article class="paper" [class.paper-empty]="!page">
+        @if (page) {
+          <div class="paper-toolbar">
+            <span><i class="pi pi-pencil"></i> Página {{ page.id }}</span>
+            <span class="save-indicator"><i class="pi pi-check-circle"></i> Guardado</span>
+          </div>
+
+          <textarea
+            class="writing-area"
+            [value]="page.content"
+            placeholder="Empieza a escribir aquí..."
+            [attr.aria-label]="'Contenido de la página ' + page.id"
+            (input)="updatePageContent($event, currentSpread() * 2 + pageIndex)"
+          ></textarea>
+        } @else {
+          <div class="empty-page">
+            <i class="pi pi-book"></i>
+            <span>Esta página estará disponible al crearla</span>
+          </div>
+        }
+      </article>
+    }
+  </section>
+
+  <footer class="notebook-navigation">
+    <button
+      pButton
+      type="button"
+      label="Anterior"
+      icon="pi pi-arrow-left"
+      severity="secondary"
+      [outlined]="true"
+      [disabled]="currentSpread() === 0"
+      (click)="goToPreviousPage()"
+    ></button>
+
+    <p-paginator
+      [first]="currentSpread()"
+      [rows]="1"
+      [totalRecords]="spreadCount()"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Spread {currentPage} de {totalPages}"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
+
+    <button
+      pButton
+      type="button"
+      label="Siguiente"
+      icon="pi pi-arrow-right"
+      iconPos="right"
+      [disabled]="currentSpread() === spreadCount() - 1"
+      (click)="goToNextPage()"
+    ></button>
+  </footer>
+</main>

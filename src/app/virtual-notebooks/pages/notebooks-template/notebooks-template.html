@@ -58,12 +58,14 @@
 
           <div
             class="page-canvas"
+            [style.--notebook-line-color]="pageLineColor"
             (pointerdown)="onCanvasPointerDown($event, currentSpread() * 2 + pageIndex)"
             (pointermove)="onPointerMove($event)"
             (pointerup)="onPointerUp($event)"
             (pointercancel)="onPointerUp($event)"
           >
             <textarea
+              #writingArea
               class="writing-area"
               [value]="page.content"
               placeholder="Escribe aquí o elige una herramienta..."
@@ -81,6 +83,7 @@
                 [style.top.px]="element.y"
                 [style.width.px]="element.width"
                 [style.height.px]="element.height"
+                [style.transform]="'rotate(' + element.rotation + 'deg)'"
                 (pointerdown)="
                   onElementPointerDown($event, currentSpread() * 2 + pageIndex, element)
                 "
@@ -148,6 +151,14 @@
                 }
 
                 @if (isSelected(element.id) && activeTool() === 'select') {
+                  <button
+                    type="button"
+                    class="rotate-handle"
+                    aria-label="Rotar elemento"
+                    (pointerdown)="onRotatePointerDown($event, currentSpread() * 2 + pageIndex, element)"
+                  >
+                    <i class="pi pi-refresh"></i>
+                  </button>
                   @for (handle of resizeHandles; track handle) {
                     <button
                       type="button"
@@ -168,7 +179,7 @@
               </div>
             }
 
-            @if (draftElement(); as draft) {
+            @if (draftPageIndex() === currentSpread() * 2 + pageIndex && draftElement(); as draft) {
               <div
                 class="canvas-element draft-element"
                 [class.text-element]="draft.type === 'text'"
@@ -193,7 +204,7 @@
               </div>
             }
 
-            @if (selectionBox(); as box) {
+            @if (selectionBoxPageIndex() === currentSpread() * 2 + pageIndex && selectionBox(); as box) {
               <div
                 class="selection-box"
                 [style.left.px]="box.x"

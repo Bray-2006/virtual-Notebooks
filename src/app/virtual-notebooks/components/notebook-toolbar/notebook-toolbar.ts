@@ -2,17 +2,9 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
+import type { NotebookTool } from '../../pages/notebooks-template/interfaces/notebook-template.interface';
 
-export type NotebookTool =
-  | 'hand'
-  | 'select'
-  | 'text'
-  | 'image'
-  | 'rectangle'
-  | 'ellipse'
-  | 'line'
-  | 'arrow'
-  | 'eraser';
+export type { NotebookTool } from '../../pages/notebooks-template/interfaces/notebook-template.interface';
 
 @Component({
   selector: 'app-notebook-toolbar',

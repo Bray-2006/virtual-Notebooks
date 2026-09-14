@@ -101,7 +101,9 @@
   height: 100%;
   min-height: 100%;
   padding: 1.5rem;
+  padding-top: 2.4rem;
   border: 0;
+  overflow: hidden;
   outline: 0;
   resize: none;
   color: #1e293b;
@@ -109,6 +111,13 @@
   font-size: 1.05rem;
   line-height: 2rem;
   background: transparent;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(2rem - 1px),
+    color-mix(in srgb, var(--notebook-line-color) 24%, transparent) calc(2rem - 1px),
+    color-mix(in srgb, var(--notebook-line-color) 24%, transparent) 2rem
+  );
 }
 
 .canvas-element {
@@ -126,6 +135,10 @@
 
 .canvas-element.element-selected {
   border-color: #6366f1;
+}
+
+.canvas-element.element-selected {
+  transform-origin: center center;
 }
 
 .canvas-element.draft-element {
@@ -199,6 +212,28 @@
 .resize-s { bottom: -5px; left: calc(50% - 4px); cursor: ns-resize; }
 .resize-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
 .resize-w { top: calc(50% - 4px); left: -5px; cursor: ew-resize; }
+
+.rotate-handle {
+  position: absolute;
+  top: -2rem;
+  left: calc(50% - 0.65rem);
+  z-index: 5;
+  display: grid;
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0;
+  cursor: grab;
+  place-items: center;
+  border: 1px solid #4f46e5;
+  border-radius: 50%;
+  color: #4f46e5;
+  background: #fff;
+  font-size: 0.65rem;
+}
+
+.rotate-handle:active {
+  cursor: grabbing;
+}
 
 .selection-box {
   position: absolute;

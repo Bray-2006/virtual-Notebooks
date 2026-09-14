@@ -12,18 +12,6 @@
       [pTooltip]="canvasLocked() ? 'Desbloquear lienzo' : 'Bloquear lienzo'"
       (click)="toggleLock()"
     ></button>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-hand-paper"
-      severity="secondary"
-      text
-      rounded
-      [class.tool-active]="activeTool() === 'hand'"
-      aria-label="Mover lienzo"
-      pTooltip="Mover lienzo"
-      (click)="selectTool('hand')"
-    ></button>
     <span class="toolbar-divider"></span>
     <button
       pButton

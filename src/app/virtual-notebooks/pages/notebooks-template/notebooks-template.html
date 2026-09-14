@@ -10,7 +10,6 @@
       />
       <p class="page-counter">Spread {{ currentSpread() + 1 }} de {{ spreadCount() }}</p>
     </div>
-
     <button
       pButton
       type="button"
@@ -21,26 +20,192 @@
     ></button>
   </header>
 
+  <app-notebook-toolbar
+    [activeTool]="activeTool()"
+    [canvasLocked]="canvasLocked()"
+    [canUndo]="canUndo()"
+    [canRedo]="canRedo()"
+    [selectedPageId]="selectedPage()?.id ?? null"
+    [selectedCount]="selectedElementIds().length"
+    (toolSelected)="setActiveTool($event)"
+    (lockToggled)="toggleCanvasLock()"
+    (undoRequested)="undo()"
+    (redoRequested)="redo()"
+    (deleteRequested)="deleteSelected()"
+  />
+  <input
+    #imageInput
+    class="image-input"
+    type="file"
+    accept="image/*"
+    aria-label="Seleccionar imagen"
+    (change)="onImageSelected($event)"
+  />
+
   <section class="paper-spread" aria-label="Páginas del cuaderno">
     @for (page of visiblePages(); track $index; let pageIndex = $index) {
-      <article class="paper" [class.paper-empty]="!page">
+      <article
+        class="paper"
+        [class.paper-empty]="!page"
+        [class.paper-selected]="page && selectedPageIndex() === currentSpread() * 2 + pageIndex"
+        (click)="page && selectPage(currentSpread() * 2 + pageIndex)"
+      >
         @if (page) {
           <div class="paper-toolbar">
-            <span><i class="pi pi-pencil"></i> Página {{ page.id }}</span>
-            <span class="save-indicator"><i class="pi pi-check-circle"></i> Guardado</span>
+            <span><i class="pi pi-file-edit"></i> Página {{ page.id }}</span>
+            <span class="save-indicator"><i class="pi pi-check-circle"></i> Demo local</span>
           </div>
 
-          <textarea
-            class="writing-area"
-            [value]="page.content"
-            placeholder="Empieza a escribir aquí..."
-            [attr.aria-label]="'Contenido de la página ' + page.id"
-            (input)="updatePageContent($event, currentSpread() * 2 + pageIndex)"
-          ></textarea>
+          <div
+            class="page-canvas"
+            (pointerdown)="onCanvasPointerDown($event, currentSpread() * 2 + pageIndex)"
+            (pointermove)="onPointerMove($event)"
+            (pointerup)="onPointerUp($event)"
+            (pointercancel)="onPointerUp($event)"
+          >
+            <textarea
+              class="writing-area"
+              [value]="page.content"
+              placeholder="Escribe aquí o elige una herramienta..."
+              [attr.aria-label]="'Contenido de la página ' + page.id"
+              (input)="updatePageContent($event, currentSpread() * 2 + pageIndex)"
+            ></textarea>
+
+            @for (element of page.elements; track element.id) {
+              <div
+                class="canvas-element"
+                [class.element-selected]="isSelected(element.id)"
+                [class.text-element]="element.type === 'text'"
+                [class.image-element]="element.type === 'image'"
+                [style.left.px]="element.x"
+                [style.top.px]="element.y"
+                [style.width.px]="element.width"
+                [style.height.px]="element.height"
+                (pointerdown)="
+                  onElementPointerDown($event, currentSpread() * 2 + pageIndex, element)
+                "
+              >
+                @switch (element.type) {
+                  @case ('text') {
+                    <textarea
+                      class="element-textarea"
+                      [value]="element.content ?? ''"
+                      aria-label="Texto del elemento"
+                      (input)="
+                        updateElementText($event, currentSpread() * 2 + pageIndex, element.id)
+                      "
+                    ></textarea>
+                  }
+                  @case ('image') {
+                    <img
+                      class="element-image"
+                      [src]="element.imageUrl"
+                      alt="Imagen del elemento"
+                      aria-label="Imagen del elemento"
+                    />
+                  }
+                  @case ('rectangle') {
+                    <svg
+                      class="element-shape"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-label="Rectángulo"
+                    >
+                      <rect x="2" y="2" width="96" height="96" rx="4"></rect>
+                    </svg>
+                  }
+                  @case ('ellipse') {
+                    <svg
+                      class="element-shape"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-label="Elipse"
+                    >
+                      <ellipse cx="50" cy="50" rx="48" ry="48"></ellipse>
+                    </svg>
+                  }
+                  @case ('line') {
+                    <svg
+                      class="element-shape"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-label="Línea"
+                    >
+                      <line x1="2" y1="50" x2="98" y2="50"></line>
+                    </svg>
+                  }
+                  @case ('arrow') {
+                    <svg
+                      class="element-shape"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-label="Flecha"
+                    >
+                      <line x1="2" y1="50" x2="90" y2="50"></line>
+                      <polyline points="76,35 94,50 76,65"></polyline>
+                    </svg>
+                  }
+                }
+
+                @if (isSelected(element.id) && activeTool() === 'select') {
+                  @for (handle of resizeHandles; track handle) {
+                    <button
+                      type="button"
+                      class="resize-handle"
+                      [class]="'resize-handle resize-' + handle"
+                      [attr.aria-label]="'Redimensionar ' + handle"
+                      (pointerdown)="
+                        onResizePointerDown(
+                          $event,
+                          currentSpread() * 2 + pageIndex,
+                          element,
+                          handle
+                        )
+                      "
+                    ></button>
+                  }
+                }
+              </div>
+            }
+
+            @if (draftElement(); as draft) {
+              <div
+                class="canvas-element draft-element"
+                [class.text-element]="draft.type === 'text'"
+                [style.left.px]="draft.x"
+                [style.top.px]="draft.y"
+                [style.width.px]="draft.width"
+                [style.height.px]="draft.height"
+              >
+                @if (draft.type === 'text') {
+                  <span>Escribe aquí</span>
+                } @else {
+                  <svg class="element-shape" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    @if (draft.type === 'ellipse') {
+                      <ellipse cx="50" cy="50" rx="48" ry="48"></ellipse>
+                    } @else if (draft.type === 'line' || draft.type === 'arrow') {
+                      <line x1="2" y1="50" x2="98" y2="50"></line>
+                    } @else {
+                      <rect x="2" y="2" width="96" height="96" rx="4"></rect>
+                    }
+                  </svg>
+                }
+              </div>
+            }
+
+            @if (selectionBox(); as box) {
+              <div
+                class="selection-box"
+                [style.left.px]="box.x"
+                [style.top.px]="box.y"
+                [style.width.px]="box.width"
+                [style.height.px]="box.height"
+              ></div>
+            }
+          </div>
         } @else {
           <div class="empty-page">
-            <i class="pi pi-book"></i>
-            <span>Esta página estará disponible al crearla</span>
+            <i class="pi pi-book"></i><span>Esta página estará disponible al crearla</span>
           </div>
         }
       </article>
@@ -58,7 +223,6 @@
       [disabled]="currentSpread() === 0"
       (click)="goToPreviousPage()"
     ></button>
-
     <p-paginator
       [first]="currentSpread()"
       [rows]="1"
@@ -67,7 +231,6 @@
       currentPageReportTemplate="Spread {currentPage} de {totalPages}"
       (onPageChange)="onPageChange($event)"
     ></p-paginator>
-
     <button
       pButton
       type="button"

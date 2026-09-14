@@ -1,8 +1,4 @@
-.notebook-page {
-  min-height: calc(100vh - 5rem);
-  padding: clamp(1.25rem, 3vw, 3rem);
-  /* background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); */
-}
+
 
 .notebook-header,
 .notebook-navigation,
@@ -15,7 +11,7 @@
 
 .notebook-header {
   max-width: 68rem;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 1.25rem;
 }
 
 .eyebrow {
@@ -47,13 +43,16 @@
   font-size: 0.9rem;
 }
 
+.image-input {
+  display: none;
+}
+
 .paper-spread {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
   max-width: 68rem;
   margin: 0 auto;
-  transition: opacity 180ms ease-in-out;
 }
 
 .paper {
@@ -61,43 +60,152 @@
   flex-direction: column;
   min-height: min(62vh, 42rem);
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  border-radius: 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.7rem;
   background: #fff;
-  box-shadow: 0 1.5rem 3rem rgb(30 41 59 / 0.1);
+  box-shadow: 0 1rem 2rem rgb(30 41 59 / 0.08);
+}
+
+.paper-selected {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 2px rgb(99 102 241 / 0.12), 0 1rem 2rem rgb(30 41 59 / 0.08);
 }
 
 .paper-toolbar {
-  padding: 1rem 1.25rem;
+  min-height: 2.5rem;
+  padding: 0.6rem 0.9rem;
   border-bottom: 1px solid #e2e8f0;
   color: #475569;
-  font-size: 0.9rem;
-}
-
-.save-indicator {
-  color: #16a34a;
   font-size: 0.8rem;
 }
 
-.writing-area {
+.save-indicator {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.page-canvas {
+  position: relative;
   flex: 1;
-  width: 100%;
   min-height: 28rem;
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.writing-area {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
   padding: 1.5rem;
   border: 0;
   outline: 0;
-  resize: vertical;
+  resize: none;
   color: #1e293b;
   font: inherit;
   font-size: 1.05rem;
   line-height: 2rem;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(2rem - 1px),
-    #e2e8f0 calc(2rem - 1px),
-    #e2e8f0 2rem
-  );
+  background: transparent;
+}
+
+.canvas-element {
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  min-width: 24px;
+  min-height: 24px;
+  overflow: visible;
+  border: 1px solid transparent;
+  background: transparent;
+  touch-action: none;
+  user-select: none;
+}
+
+.canvas-element.element-selected {
+  border-color: #6366f1;
+}
+
+.canvas-element.draft-element {
+  z-index: 4;
+  border: 1px dashed #6366f1;
+  background: rgb(224 231 255 / 0.15);
+  pointer-events: none;
+}
+
+.element-textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 24px;
+  padding: 0.35rem;
+  border: 0;
+  outline: 0;
+  resize: none;
+  color: #0f172a;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.45;
+  background: transparent;
+  user-select: text;
+}
+
+.element-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.element-shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.element-shape rect,
+.element-shape ellipse,
+.element-shape line,
+.element-shape polyline {
+  fill: none;
+  stroke: #1f2937;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.resize-handle {
+  position: absolute;
+  z-index: 5;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid #4f46e5;
+  border-radius: 2px;
+  background: #fff;
+  pointer-events: auto;
+}
+
+.resize-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+.resize-n { top: -5px; left: calc(50% - 4px); cursor: ns-resize; }
+.resize-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+.resize-e { top: calc(50% - 4px); right: -5px; cursor: ew-resize; }
+.resize-se { right: -5px; bottom: -5px; cursor: nwse-resize; }
+.resize-s { bottom: -5px; left: calc(50% - 4px); cursor: ns-resize; }
+.resize-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+.resize-w { top: calc(50% - 4px); left: -5px; cursor: ew-resize; }
+
+.selection-box {
+  position: absolute;
+  z-index: 6;
+  border: 1px solid #6366f1;
+  background: rgb(99 102 241 / 0.1);
+  pointer-events: none;
 }
 
 .empty-page {
@@ -111,10 +219,6 @@
   text-align: center;
 }
 
-.empty-page i {
-  font-size: 1.25rem;
-}
-
 .notebook-navigation {
   max-width: 68rem;
   margin: 1.25rem auto 0;
@@ -124,7 +228,7 @@
   flex: 1;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .notebook-header,
   .notebook-navigation,
   .paper-toolbar {
@@ -143,9 +247,5 @@
 
   .notebook-navigation p-paginator {
     order: -1;
-  }
-
-  .save-indicator {
-    align-self: flex-start;
   }
 }

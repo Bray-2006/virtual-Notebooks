@@ -33,6 +33,8 @@ type ToolType = NotebookTool;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NotebooksTemplate {
+  
+  
   @ViewChild('imageInput') private imageInput?: ElementRef<HTMLInputElement>;
 
   readonly resizeHandles: ResizeHandle[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];

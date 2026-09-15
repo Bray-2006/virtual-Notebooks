@@ -1,0 +1,168 @@
+<p-toolbar class="editor-toolbar" aria-label="Herramientas del cuaderno">
+  <ng-template #start>
+    <button
+      pButton
+      type="button"
+      [icon]="canvasLocked() ? 'pi pi-lock' : 'pi pi-lock-open'"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="canvasLocked()"
+      [attr.aria-label]="canvasLocked() ? 'Desbloquear lienzo' : 'Bloquear lienzo'"
+      [pTooltip]="canvasLocked() ? 'Desbloquear lienzo' : 'Bloquear lienzo'"
+      (click)="toggleLock()"
+    ></button>
+    <span class="toolbar-divider"></span>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-arrow-up-left"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'select'"
+      aria-label="Seleccionar y mover"
+      pTooltip="Seleccionar y mover"
+      (click)="selectTool('select')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-stop"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'rectangle'"
+      aria-label="Dibujar rectángulo"
+      pTooltip="Rectángulo"
+      (click)="selectTool('rectangle')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-circle"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'ellipse'"
+      aria-label="Dibujar elipse"
+      pTooltip="Elipse"
+      (click)="selectTool('ellipse')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-arrow-right"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'arrow'"
+      aria-label="Dibujar flecha"
+      pTooltip="Flecha"
+      (click)="selectTool('arrow')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-minus"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'line'"
+      aria-label="Dibujar línea"
+      pTooltip="Línea"
+      (click)="selectTool('line')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-pencil"
+      severity="secondary"
+      text
+      rounded
+      aria-label="Dibujar a mano alzada"
+      pTooltip="Dibujo libre (próximamente)"
+      [disabled]="true"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-align-left"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'text'"
+      aria-label="Añadir texto"
+      pTooltip="Texto"
+      (click)="selectTool('text')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-image"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'image'"
+      aria-label="Añadir imagen"
+      pTooltip="Imagen"
+      (click)="selectTool('image')"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-eraser"
+      severity="secondary"
+      text
+      rounded
+      [class.tool-active]="activeTool() === 'eraser'"
+      aria-label="Borrar elemento"
+      pTooltip="Borrador"
+      (click)="selectTool('eraser')"
+    ></button>
+    <span class="toolbar-divider"></span>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-undo"
+      severity="secondary"
+      text
+      rounded
+      aria-label="Deshacer"
+      pTooltip="Deshacer (Ctrl+Z)"
+      [disabled]="!canUndo()"
+      (click)="requestUndo()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-refresh"
+      severity="secondary"
+      text
+      rounded
+      aria-label="Rehacer"
+      pTooltip="Rehacer (Ctrl+Shift+Z)"
+      [disabled]="!canRedo()"
+      (click)="requestRedo()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-trash"
+      severity="danger"
+      text
+      rounded
+      aria-label="Eliminar selección"
+      pTooltip="Eliminar (Supr)"
+      [disabled]="selectedCount() === 0"
+      (click)="requestDelete()"
+    ></button>
+  </ng-template>
+
+  <ng-template #end>
+    <span class="selected-page-label">
+      <i class="pi pi-map-marker"></i>
+      Página {{ selectedPageId() ?? '—' }}
+    </span>
+  </ng-template>
+</p-toolbar>

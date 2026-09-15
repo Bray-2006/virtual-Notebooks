@@ -1,0 +1,40 @@
+.editor-toolbar {
+  max-width: 68rem;
+  margin: 0 auto 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1rem rgb(30 41 59 / 0.06);
+}
+
+.editor-toolbar :is(.p-toolbar-start, .p-toolbar-end) {
+  gap: 0.15rem;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 1.8rem;
+  margin: 0 0.35rem;
+  background: #e2e8f0;
+}
+
+.tool-active {
+  color: #3730a3 !important;
+  background: #e0e7ff !important;
+}
+
+.selected-page-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+  .editor-toolbar :is(.p-toolbar-start, .p-toolbar-end) {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

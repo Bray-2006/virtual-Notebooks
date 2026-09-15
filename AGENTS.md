@@ -36,6 +36,8 @@ El objetivo principal es mantener una aplicación:
 - Consistente con Angular moderno.
 - Con responsabilidades bien separadas.
 - Con el menor acoplamiento posible.
+- Comentar el codigo, metodos, funciones, comentar las secciones del codigo, ejemplo, los signals etc
+- Cuando el archivo ts del componente es muy grande y ocupa muchos metodos y funciones, separarlos en un archivo de utils, aplicalo si son mas de 15 metodos y o funciones o si son funciones o metodos muy largos. y exportar los metodos, y o funciones para usarlos en el ts del componente
 
 Antes de modificar código, el agente debe entender primero la arquitectura existente y respetar las convenciones del proyecto.
 

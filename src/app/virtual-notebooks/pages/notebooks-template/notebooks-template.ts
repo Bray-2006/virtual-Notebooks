@@ -22,6 +22,16 @@ import type {
   ResizeHandle,
   SelectionBox,
 } from './interfaces/notebook-template.interface';
+import {
+  cloneElements,
+  clonePages,
+  constrainPoint,
+  getAngle,
+  getBounds,
+  getCanvasPoint,
+  intersectsSelectionBox,
+  resizeElement,
+} from './utils/notebooks-template.utils';
 
 type ToolType = NotebookTool;
 
@@ -171,7 +181,7 @@ export default class NotebooksTemplate {
     }
 
     this.selectPage(pageIndex);
-    const point = this.getCanvasPoint(event, event.currentTarget as HTMLElement);
+    const point = getCanvasPoint(event, event.currentTarget as HTMLElement);
 
     if (tool === 'image') {
       this.pendingImagePlacement = { pageIndex, point };
@@ -194,7 +204,7 @@ export default class NotebooksTemplate {
       return;
     }
 
-    this.interaction = { kind: 'draw', pageIndex, start: point, initialPages: this.clonePages() };
+    this.interaction = { kind: 'draw', pageIndex, start: point, initialPages: clonePages(this.pages()) };
     this.draftElement.set({
       ...this.createElement(tool, point.x, point.y, 1, 1),
       content: tool === 'text' ? '' : undefined,
@@ -231,10 +241,10 @@ export default class NotebooksTemplate {
     this.interaction = {
       kind: 'move',
       pageIndex,
-      start: this.getCanvasPoint(event, this.getCanvasElement(event)),
+        start: getCanvasPoint(event, this.getCanvasElement(event)),
       elementIds,
-      initialElements: this.cloneElements(this.pages()[pageIndex].elements),
-      initialPages: this.clonePages(),
+      initialElements: cloneElements(this.pages()[pageIndex].elements),
+      initialPages: clonePages(this.pages()),
     };
     this.setPointerCapture(event);
   }
@@ -257,7 +267,7 @@ export default class NotebooksTemplate {
       elementId: element.id,
       handle,
       initialElement: { ...element },
-      initialPages: this.clonePages(),
+      initialPages: clonePages(this.pages()),
     };
     this.setPointerCapture(event);
   }
@@ -267,7 +277,7 @@ export default class NotebooksTemplate {
     if (this.canvasLocked() || this.activeTool() !== 'select') return;
 
     const canvas = this.getCanvasElement(event);
-    const point = this.getCanvasPoint(event, canvas);
+    const point = getCanvasPoint(event, canvas);
     const center = {
       x: element.x + element.width / 2,
       y: element.y + element.height / 2,
@@ -278,10 +288,10 @@ export default class NotebooksTemplate {
       kind: 'rotate',
       pageIndex,
       elementId: element.id,
-      startAngle: this.getAngle(center, point),
+      startAngle: getAngle(center, point),
       center,
       initialElement: { ...element },
-      initialPages: this.clonePages(),
+      initialPages: clonePages(this.pages()),
     };
     this.setPointerCapture(event);
   }
@@ -291,16 +301,16 @@ export default class NotebooksTemplate {
     if (!interaction) return;
 
     const canvas = this.getCanvasElement(event);
-    const point = this.constrainPoint(this.getCanvasPoint(event, canvas), canvas);
+    const point = constrainPoint(getCanvasPoint(event, canvas), canvas);
     if (interaction.kind === 'draw') {
       this.draftElement.update((draft) =>
-        draft ? { ...draft, ...this.getBounds(interaction.start, point) } : null,
+          draft ? { ...draft, ...getBounds(interaction.start, point) } : null,
       );
       return;
     }
 
     if (interaction.kind === 'marquee') {
-      this.selectionBox.set(this.getBounds(interaction.start, point));
+      this.selectionBox.set(getBounds(interaction.start, point));
       return;
     }
 
@@ -346,7 +356,7 @@ export default class NotebooksTemplate {
     }
 
     if (interaction.kind === 'rotate') {
-      const angle = this.getAngle(interaction.center, point);
+      const angle = getAngle(interaction.center, point);
       const rotation = interaction.initialElement.rotation +
         ((angle - interaction.startAngle) * 180) / Math.PI;
       this.pages.update((pages) =>
@@ -364,7 +374,7 @@ export default class NotebooksTemplate {
       return;
     }
 
-    const resized = this.resizeElement(
+    const resized = resizeElement(
       interaction.initialElement,
       interaction.handle,
       point,
@@ -394,7 +404,7 @@ export default class NotebooksTemplate {
       this.draftElement.set(null);
       this.draftPageIndex.set(null);
       if (draft && draft.width >= 8 && draft.height >= 8) {
-        const nextPages = this.clonePages();
+        const nextPages = clonePages(this.pages());
         nextPages[interaction.pageIndex].elements.push(draft);
         this.commitPages(nextPages, interaction.initialPages);
         this.selectedElementIds.set([draft.id]);
@@ -404,7 +414,7 @@ export default class NotebooksTemplate {
       const box = this.selectionBox();
       if (box) {
         const matchingIds = this.pages()[interaction.pageIndex].elements
-          .filter((element) => this.intersects(box, element))
+          .filter((element) => intersectsSelectionBox(box, element))
           .map((element) => element.id);
         this.selectedElementIds.set(
           event.shiftKey ? [...new Set([...interaction.initialSelection, ...matchingIds])] : matchingIds,
@@ -440,7 +450,7 @@ export default class NotebooksTemplate {
       image.y = Math.min(image.y, Math.max(0, canvas.clientHeight - image.height));
     }
     image.imageUrl = URL.createObjectURL(file);
-    const nextPages = this.clonePages();
+    const nextPages = clonePages(this.pages());
     nextPages[placement.pageIndex].elements.push(image);
     this.commitPages(nextPages);
     this.selectedPageIndex.set(placement.pageIndex);
@@ -454,7 +464,7 @@ export default class NotebooksTemplate {
     const selectedIds = this.selectedElementIds();
     if (!selectedIds.length) return;
 
-    const nextPages = this.clonePages();
+    const nextPages = clonePages(this.pages());
     nextPages[this.selectedPageIndex()].elements = nextPages[this.selectedPageIndex()].elements.filter(
       (element) => !selectedIds.includes(element.id),
     );
@@ -463,7 +473,7 @@ export default class NotebooksTemplate {
   }
 
   deleteElement(pageIndex: number, elementId: string): void {
-    const nextPages = this.clonePages();
+    const nextPages = clonePages(this.pages());
     nextPages[pageIndex].elements = nextPages[pageIndex].elements.filter(
       (element) => element.id !== elementId,
     );
@@ -492,8 +502,8 @@ export default class NotebooksTemplate {
     const previous = snapshots.at(-1);
     if (!previous) return;
 
-    this.redoHistory.update((redo) => [...redo, this.clonePages()]);
-    this.pages.set(this.clonePages(previous));
+    this.redoHistory.update((redo) => [...redo, clonePages(this.pages())]);
+    this.pages.set(clonePages(previous));
     this.history.set(snapshots.slice(0, -1));
     this.selectedElementIds.set([]);
   }
@@ -503,14 +513,14 @@ export default class NotebooksTemplate {
     const next = snapshots.at(-1);
     if (!next) return;
 
-    this.history.update((history) => [...history, this.clonePages()]);
-    this.pages.set(this.clonePages(next));
+    this.history.update((history) => [...history, clonePages(this.pages())]);
+    this.pages.set(clonePages(next));
     this.redoHistory.set(snapshots.slice(0, -1));
     this.selectedElementIds.set([]);
   }
 
   addPage(): void {
-    const nextPages = this.clonePages();
+    const nextPages = clonePages(this.pages());
     nextPages.push({ id: nextPages.length + 1, content: '', elements: [] });
     this.commitPages(nextPages);
     const pageIndex = nextPages.length - 1;
@@ -559,10 +569,10 @@ export default class NotebooksTemplate {
     }
   }
 
-  private commitPages(nextPages: NotebookPage[], previousPages = this.clonePages()): void {
-    this.history.update((snapshots) => [...snapshots, this.clonePages(previousPages)]);
+  private commitPages(nextPages: NotebookPage[], previousPages = clonePages(this.pages())): void {
+    this.history.update((snapshots) => [...snapshots, clonePages(previousPages)]);
     this.redoHistory.set([]);
-    this.pages.set(this.clonePages(nextPages));
+    this.pages.set(clonePages(nextPages));
   }
 
   private createElement(type: ElementType, x: number, y: number, width = 1, height = 1): NotebookElement {
@@ -578,70 +588,9 @@ export default class NotebooksTemplate {
     };
   }
 
-  private resizeElement(
-    element: NotebookElement,
-    handle: ResizeHandle,
-    point: Point,
-    canvasWidth: number,
-    canvasHeight: number,
-  ): NotebookElement {
-    const minimum = 24;
-    let left = element.x;
-    let top = element.y;
-    let right = element.x + element.width;
-    let bottom = element.y + element.height;
-
-    if (handle.includes('w')) left = Math.max(0, Math.min(point.x, right - minimum));
-    if (handle.includes('e')) right = Math.min(canvasWidth, Math.max(point.x, left + minimum));
-    if (handle.includes('n')) top = Math.max(0, Math.min(point.y, bottom - minimum));
-    if (handle.includes('s')) bottom = Math.min(canvasHeight, Math.max(point.y, top + minimum));
-
-    return {
-      ...element,
-      x: Math.max(0, left),
-      y: Math.max(0, top),
-      width: right - left,
-      height: bottom - top,
-    };
-  }
-
-  private getBounds(start: Point, end: Point): SelectionBox {
-    return {
-      x: Math.min(start.x, end.x),
-      y: Math.min(start.y, end.y),
-      width: Math.abs(end.x - start.x),
-      height: Math.abs(end.y - start.y),
-    };
-  }
-
-  private intersects(box: SelectionBox, element: NotebookElement): boolean {
-    return (
-      element.x < box.x + box.width &&
-      element.x + element.width > box.x &&
-      element.y < box.y + box.height &&
-      element.y + element.height > box.y
-    );
-  }
-
-  private getCanvasPoint(event: PointerEvent, element: HTMLElement): Point {
-    const rect = element.getBoundingClientRect();
-    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-  }
-
-  private constrainPoint(point: Point, canvas: HTMLElement): Point {
-    return {
-      x: Math.min(Math.max(point.x, 0), canvas.clientWidth),
-      y: Math.min(Math.max(point.y, 0), canvas.clientHeight),
-    };
-  }
-
   private getVisibleCanvas(pageIndex: number): HTMLElement | null {
     const visibleIndex = pageIndex - this.currentSpread() * 2;
     return document.querySelectorAll<HTMLElement>('.page-canvas')[visibleIndex] ?? null;
-  }
-
-  private getAngle(center: Point, point: Point): number {
-    return Math.atan2(point.y - center.y, point.x - center.x);
   }
 
   private getCanvasElement(event: PointerEvent): HTMLElement {
@@ -666,11 +615,4 @@ export default class NotebooksTemplate {
     (event.target as HTMLElement).releasePointerCapture?.(event.pointerId);
   }
 
-  private cloneElements(elements: NotebookElement[]): NotebookElement[] {
-    return elements.map((element) => ({ ...element }));
-  }
-
-  private clonePages(pages = this.pages()): NotebookPage[] {
-    return pages.map((page) => ({ ...page, elements: this.cloneElements(page.elements) }));
-  }
 }

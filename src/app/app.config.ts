@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
+import { provideQuillConfig } from 'ngx-quill/config';
 
 import { routes } from './app.routes';
 
@@ -24,6 +25,7 @@ const VirtualNotebooksPreset = definePreset(Aura, {
   }
 });
 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -36,6 +38,9 @@ export const appConfig: ApplicationConfig = {
         }
       },
       ripple: true
-    })
-  ]
+    }),
+    provideQuillConfig({
+      modules: { toolbar: [['bold', 'italic', 'underline'], [{ color: [] }, { background: [] }]] },
+    }),
+  ],
 };

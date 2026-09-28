@@ -24,13 +24,15 @@ export interface NotebookElement {
   width: number;
   height: number;
   rotation: number;
-  content?: string;
+  
+content?: string | { ops: any[] };
   imageUrl?: string;
 }
 
 export interface NotebookPage {
   id: number;
-  content: string;
+  
+content?: string | { ops: any[] };
   elements: NotebookElement[];
 }
 

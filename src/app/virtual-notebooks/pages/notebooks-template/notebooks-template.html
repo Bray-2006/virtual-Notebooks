@@ -90,14 +90,8 @@
               >
                 @switch (element.type) {
                   @case ('text') {
-                    <textarea
-                      class="element-textarea"
-                      [value]="element.content ?? ''"
-                      aria-label="Texto del elemento"
-                      (input)="
-                        updateElementText($event, currentSpread() * 2 + pageIndex, element.id)
-                      "
-                    ></textarea>
+                  <quill-editor class="element-quill" theme="bubble" format="object" bounds=".page-canvas" [ngModel]="element.content"
+                    (onContentChanged)="updateElementText($event, currentSpread() * 2 + pageIndex, element.id)"></quill-editor>
                   }
                   @case ('image') {
                     <img

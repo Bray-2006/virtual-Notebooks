@@ -33,11 +33,14 @@ import {
   resizeElement,
 } from './utils/notebooks-template.utils';
 
+import { FormsModule } from '@angular/forms';
+import { QuillEditorComponent } from 'ngx-quill';
+
 type ToolType = NotebookTool;
 
 @Component({
   selector: 'app-notebooks-template',
-  imports: [ButtonModule, NotebookToolbarComponent, PaginatorModule],
+  imports: [ButtonModule, NotebookToolbarComponent, PaginatorModule, QuillEditorComponent, FormsModule ],
   templateUrl: './notebooks-template.html',
   styleUrl: './notebooks-template.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -215,6 +218,17 @@ export default class NotebooksTemplate {
 
   onElementPointerDown(event: PointerEvent, pageIndex: number, element: NotebookElement): void {
     if (this.canvasLocked()) return;
+
+
+    const target = event.target as HTMLElement;
+    const isEditingText = element.type === 'text' && target.closest('.ql-editor');
+
+  if (isEditingText && this.activeTool() === 'select') {
+    event.stopPropagation();
+    this.selectPage(pageIndex);
+    this.selectedElementIds.set([element.id]);
+    return; // deja que Quill maneje el click/arrastre nativo dentro del texto
+  }
 
     event.stopPropagation();
     this.selectPage(pageIndex);
@@ -481,21 +495,16 @@ export default class NotebooksTemplate {
     this.selectedElementIds.update((ids) => ids.filter((id) => id !== elementId));
   }
 
-  updateElementText(event: Event, pageIndex: number, elementId: string): void {
-    const content = (event.target as HTMLTextAreaElement).value;
-    this.pages.update((pages) =>
-      pages.map((page, index) =>
-        index === pageIndex
-          ? {
-              ...page,
-              elements: page.elements.map((element) =>
-                element.id === elementId ? { ...element, content } : element,
-              ),
-            }
-          : page,
-      ),
-    );
-  }
+  updateElementText(event: { content: any }, pageIndex: number, elementId: string): void {
+  const content = event.content;
+  this.pages.update((pages) =>
+    pages.map((page, index) =>
+      index === pageIndex
+        ? { ...page, elements: page.elements.map((el) => el.id === elementId ? { ...el, content } : el) }
+        : page,
+    ),
+  );
+}
 
   undo(): void {
     const snapshots = this.history();
